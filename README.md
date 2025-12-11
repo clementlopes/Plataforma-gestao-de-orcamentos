@@ -105,8 +105,5 @@ define('DB_DATABASE', 'gestao');
 
 ## Licença
 
-Este projeto utiliza o AdminLTE como base, que está sob licença MIT.
-Verifique o arquivo LICENSE original do AdminLTE para mais detalhes.
-=======
-# Plataforma-gest-o-de-or-amentos
->>>>>>> f434d1cd8c6542d96cba41814e5ea34bf2d67e52
+Este projeto utiliza o template AdminLTE como base.
+Verifique o arquivo Licence original do AdminLTE para mais detalhes.
