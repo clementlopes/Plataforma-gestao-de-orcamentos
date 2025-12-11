@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Plataforma GO
 
 **Plataforma GO** é um sistema web de gestão empresarial desenvolvido em PHP com interface baseada no template AdminLTE.
