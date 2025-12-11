@@ -28,7 +28,7 @@ Este projeto foi desenvolvido para fins educativos já a alguns anos, por isso s
 
 ### 1. Configuração do base de Dados
 
-1. Crie uma base de dados MySQL chamado `gestao`
+1. Import a base de dados MySQL chamada `gestao` que se encontra na pasta Base dados
 2. Configure os dados no arquivo `config.php`:
 
 ```php
