@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Plataforma GO
 
 **Plataforma GO** é um sistema web de gestão empresarial desenvolvido em PHP com interface baseada no template AdminLTE.
@@ -106,3 +107,6 @@ define('DB_DATABASE', 'gestao');
 
 Este projeto utiliza o AdminLTE como base, que está sob licença MIT.
 Verifique o arquivo LICENSE original do AdminLTE para mais detalhes.
+=======
+# Plataforma-gest-o-de-or-amentos
+>>>>>>> f434d1cd8c6542d96cba41814e5ea34bf2d67e52
