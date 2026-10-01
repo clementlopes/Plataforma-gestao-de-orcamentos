@@ -380,7 +380,7 @@ CREATE TABLE `utilizadores` (
   `ID_UTILIZADORES` int(11) NOT NULL,
   `NOME` varchar(55) NOT NULL,
   `USERNAME` varchar(25) NOT NULL,
-  `PASSWORD` varchar(50) NOT NULL,
+  `PASSWORD` varchar(255) NOT NULL,
   `EMAIL` varchar(55) NOT NULL,
   `TIPO` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -388,10 +388,17 @@ CREATE TABLE `utilizadores` (
 --
 -- Extraindo dados da tabela `utilizadores`
 --
+-- A coluna PASSWORD guarda "sha256:<sal_hex>:<hash_hex>" (104 caracteres),
+-- e nao a senha em texto puro. A politica de senha exige 8 caracteres minimo.
+-- Credenciais de demonstracao:
+--   user  / user2026
+--   admin / admin2026
+-- Troque-as antes de publicar o site.
+--
 
 INSERT INTO `utilizadores` (`ID_UTILIZADORES`, `NOME`, `USERNAME`, `PASSWORD`, `EMAIL`, `TIPO`) VALUES
-(4, 'Utilizador', 'user', 'ee11cbb19052e40b07aac0ca060c23ee', 'user@mail.com', 2),
-(5, 'administrador', 'admin', '21232f297a57a5a743894a0e4a801fc3', 'admin@mail.com', 1);
+(4, 'Utilizador', 'user', 'sha256:6076605ba5d0a4c1167779e9d6ec167d:31332bd8764cbbc60dcd32e7b4ed9a64c5e9f343261f591965efb12dc254d9d6', 'user@mail.com', 2),
+(5, 'administrador', 'admin', 'sha256:6e6ed1e3fd1d2f0313fbdc301af25b67:624edb565228ab9090cef11b2fd1376b7d23b71503ad3591ac46daf463ac5668', 'admin@mail.com', 1);
 
 -- --------------------------------------------------------
 
@@ -517,6 +524,9 @@ ALTER TABLE `unidades`
 --
 ALTER TABLE `utilizadores`
   ADD PRIMARY KEY (`ID_UTILIZADORES`),
+  -- O login procura por USERNAME; sem unicidade, dois utilizadores com o
+  -- mesmo nome de utilizador tornariam o login ambiguo.
+  ADD UNIQUE KEY `USERNAME` (`USERNAME`),
   ADD KEY `TIPO` (`TIPO`);
 
 --

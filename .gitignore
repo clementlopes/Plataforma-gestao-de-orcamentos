@@ -9,3 +9,10 @@
 ad.js
 TODO
 test.html
+
+# Credenciais reais da base de dados
+.env
+
+# Ficheiros de uploaded pelo utilizador
+/uploads/
+/img/uploads/

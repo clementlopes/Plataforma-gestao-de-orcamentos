@@ -1,10 +1,17 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include_once ('config.php');
-session_start();
+include_once ('auth.php');
+
+/**
+ * Erros de PHP so sao mostrados no browser em modo de desenvolvimento.
+ * Num servidor publico isso revelaria caminhos e estrutura da base de dados,
+ * por isso APP_DEBUG tem de estar a false em producao.
+ */
+error_reporting(APP_DEBUG ? E_ALL : E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+ini_set('display_errors', APP_DEBUG ? '1' : '0');
+
+auth_iniciar_sessao();
 
   if (empty($_SESSION['ID_UTILIZADORES'])) 
   {
@@ -346,39 +353,126 @@ function actulizar_clientes($id, $nome, $rua,  $numero, $cidade, $postal, $conta
 
 /**  ===================================== UTILIZADORES ========================================================
  * UTILIZADORES inserir
+ *
+ * A senha e guardada como SHA256 com sal unico por utilizador. Devolve 1 em
+ * caso de sucesso, 0 em caso de falha (a razao fica em auth_erro()).
  */
 function insert_utilizadores($nome, $username, $password, $email, $tipo) {
-    $mypassword = md5($password);
-    $sql = "INSERT INTO utilizadores( NOME, USERNAME, PASSWORD, EMAIL, TIPO ) 
-    VALUES ( '".$nome."', '".$username."', '".$mypassword."', '".$email."', '".$tipo."');";
-//        var_dump($sql);
-//        die;
-    mysqli_query(bd(), $sql);
-   $sql1="SELECT ROW_COUNT()as linhas ;";
-    if(verifica_exist($sql1)==1){
-        return 1; 
+    $nome = trim((string) $nome);
+    $username = trim((string) $username);
+    $email = trim((string) $email);
+
+    if ($nome === '' || $username === '' || $email === '') {
+        auth_guardar_erro('Preencha o nome, o utilizador e o email.');
+        return 0;
     }
-    
+
+    if (!auth_validar_senha($password)) {
+        auth_guardar_erro('A password deve ter pelo menos ' . AUTH_PASSWORD_MIN . ' caracteres.');
+        return 0;
+    }
+
+    $senha = auth_hash_senha($password);
+
+    $sql = "INSERT INTO utilizadores (NOME, USERNAME, PASSWORD, EMAIL, TIPO)
+            VALUES (?, ?, ?, ?, ?)";
+
+    $ligacao = bd();
+    $stmt = mysqli_prepare($ligacao, $sql);
+
+    if ($stmt === false) {
+        auth_guardar_erro('Nao foi possivel criar o utilizador.');
+        return 0;
+    }
+
+    mysqli_stmt_bind_param($stmt, 'ssssi', $nome, $username, $senha, $email, $tipo);
+
+    $executado = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+
+    if (!$executado || mysqli_errno($ligacao) === 1062) {
+        auth_guardar_erro('Ja existe um utilizador com esse nome.');
+        return 0;
+    }
+
+    if (!$executado) {
+        auth_guardar_erro('Nao foi possivel criar o utilizador.');
+        return 0;
+    }
+
+    return 1;
 }
-
-
 
 
 /**
  * UTILIZADORES actualizar
+ *
+ * Se a senha vier vazia, a senha actual mantem-se. Assim editar um utilizador
+ * (por exemplo, para mudar o email) nao obriga a redefinir a senha.
  */
 function actulizar_utilizadores($id, $nome, $username, $password, $email, $tipo) {
-    $mypassword = md5($password);
-   
-    $sql = "UPDATE utilizadores SET NOME='".$nome."', USERNAME='".$username."', PASSWORD='".$mypassword."', EMAIL='".$email."', TIPO='".$tipo."' WHERE ID_UTILIZADORES=".$id.';';
-    mysqli_query(bd(), $sql);
-//    var_dump($sql);
-//    die;
-   $sql1="SELECT ROW_COUNT()as linhas ;";
-    if(verifica_exist($sql1)==1){
-        return 1; 
+    $id = (int) $id;
+    $nome = trim((string) $nome);
+    $username = trim((string) $username);
+    $email = trim((string) $email);
+
+    if ($id <= 0) {
+        auth_guardar_erro('Utilizador invalido.');
+        return 0;
     }
-    
+
+    if ($nome === '' || $username === '' || $email === '') {
+        auth_guardar_erro('Preencha o nome, o utilizador e o email.');
+        return 0;
+    }
+
+    $ligacao = bd();
+
+    if ((string) $password !== '') {
+        if (!auth_validar_senha($password)) {
+            auth_guardar_erro('A password deve ter pelo menos ' . AUTH_PASSWORD_MIN . ' caracteres.');
+            return 0;
+        }
+
+        $senha = auth_hash_senha($password);
+
+        $sql = "UPDATE utilizadores
+                SET NOME = ?, USERNAME = ?, PASSWORD = ?, EMAIL = ?, TIPO = ?
+                WHERE ID_UTILIZADORES = ?";
+
+        $stmt = mysqli_prepare($ligacao, $sql);
+
+        if ($stmt === false) {
+            auth_guardar_erro('Nao foi possivel actualizar o utilizador.');
+            return 0;
+        }
+
+        mysqli_stmt_bind_param($stmt, 'ssssii', $nome, $username, $senha, $email, $tipo, $id);
+        $executado = mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    } else {
+        $sql = "UPDATE utilizadores
+                SET NOME = ?, USERNAME = ?, EMAIL = ?, TIPO = ?
+                WHERE ID_UTILIZADORES = ?";
+
+        $stmt = mysqli_prepare($ligacao, $sql);
+
+        if ($stmt === false) {
+            auth_guardar_erro('Nao foi possivel actualizar o utilizador.');
+            return 0;
+        }
+
+        mysqli_stmt_bind_param($stmt, 'sssii', $nome, $username, $email, $tipo, $id);
+        $executado = mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+
+    if (!$executado) {
+        auth_guardar_erro('Nao foi possivel actualizar o utilizador.');
+        return 0;
+    }
+
+    return 1;
 }
 
 

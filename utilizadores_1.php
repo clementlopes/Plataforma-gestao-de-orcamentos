@@ -8,25 +8,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
      <?php
     include_once('session.php');
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                                    if (isset($_POST['nome'])) {
-//                                        var_dump($_POST['nome'], $_POST['utilizador'], $_POST['password'], $_POST['email'], $_POST['tipo']);
-//                                        die;
-                                        if (insert_utilizadores($_POST['nome'], $_POST['utilizador'], $_POST['password'], $_POST['email'], $_POST['tipo'] ) == 1) {
-                                            header("location: utilizadores.php");
-                                            
-                                        }
-                                    } else {
-                                        if (isset($_POST['nome1'])) {
-//                                             var_dump($_POST['nome1'], $_POST['utilizador1'], $_POST['password1'], $_POST['email1'], $_POST['tipo1']);
-//                                             die;
-                                            if (actulizar_utilizadores($_POST['id'], $_POST['nome1'], $_POST['utilizador1'], $_POST['password1'], $_POST['email1'], $_POST['tipo1']  ) == 1) {
-                                                header("location: utilizadores.php");
-                                            }
-                                        }
-                                    }
-                                }
-    
-    
+        if (isset($_POST['nome'])) {
+            if (insert_utilizadores($_POST['nome'], $_POST['utilizador'], $_POST['password'], $_POST['email'], $_POST['tipo'] ) == 1) {
+                header("location: utilizadores.php");
+                exit();
+            }
+        } else {
+            if (isset($_POST['nome1'])) {
+                if (actulizar_utilizadores($_POST['id'], $_POST['nome1'], $_POST['utilizador1'], $_POST['password1'], $_POST['email1'], $_POST['tipo1']  ) == 1) {
+                    header("location: utilizadores.php");
+                    exit();
+                }
+            }
+        }
+    }
+
+    $erro = auth_erro();
+    auth_limpar_erro();
     ?>
     
     
@@ -226,34 +224,43 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <div class="box box-primary">
                                 <?php
                                 if (!empty($_GET['id'])) {
-                                    $sql = 'SELECT utilizadores.NOME, utilizadores.USERNAME, utilizadores.PASSWORD, utilizadores.EMAIL, tipo.NOME TIPO '. 
-                                            'FROM utilizadores INNER JOIN tipo ON (utilizadores.TIPO = tipo.ID_TIPO) WHERE ID_UTILIZADORES='. $_GET['id'] . ';';
+                                    // (int) impede injecao de SQL no id.
+                                    $id = (int) $_GET['id'];
+                                    $sql = 'SELECT utilizadores.NOME, utilizadores.USERNAME, utilizadores.EMAIL, tipo.NOME TIPO '.
+                                            'FROM utilizadores INNER JOIN tipo ON (utilizadores.TIPO = tipo.ID_TIPO) WHERE ID_UTILIZADORES=' . $id . ';';
                                     $row = get_dados_one($sql);
                                     ?>
-                                    <form role="form" action="" method="post">
+                                    <form role="form" action="" method="post" autocomplete="off">
                                         <div class="box-body">
+
+                                            <?php if ($erro !== null) { ?>
+                                            <div class="alert alert-danger" role="alert">
+                                                <?php echo htmlspecialchars($erro, ENT_QUOTES, 'UTF-8'); ?>
+                                            </div>
+                                            <?php } ?>
 
                                             <div class="form-group">
                                                 <label for="nome">Nome:</label>
-                                                <input type="text" class="form-control" value="<?php echo $row['NOME']; ?>"name="nome1" placeholder="<?php echo $row['NOME']; ?>" >
-                                                <input type="hidden" class="form-control" name="id" value="<?php echo $_GET['id']; ?>" >
+                                                <input type="text" class="form-control" value="<?php echo htmlspecialchars($row['NOME'], ENT_QUOTES, 'UTF-8'); ?>" name="nome1" >
+                                                <input type="hidden" class="form-control" name="id" value="<?php echo $id; ?>" >
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="utilizador">Utilizador:</label>
-                                                <input type="text" class="form-control" value="<?php echo $row['USERNAME']; ?>"name="utilizador1" placeholder="<?php echo $row['USERNAME']; ?>" >
+                                                <input type="text" class="form-control" value="<?php echo htmlspecialchars($row['USERNAME'], ENT_QUOTES, 'UTF-8'); ?>" name="utilizador1" maxlength="25" required >
                                                
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="password">Password:</label>
-                                                <input type="text" class="form-control" value=""name="password1" placeholder="PASSWORD CONFIDENCIAL" >
+                                                <input type="password" class="form-control" value="" name="password1" placeholder="Deixe em branco para manter" minlength="8" autocomplete="new-password" >
+                                                <p class="help-block">Minimo <?php echo AUTH_PASSWORD_MIN; ?> caracteres. Se ficar em branco, a password actual mantem-se.</p>
                                                 
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="email">Email:</label>
-                                                <input type="text" class="form-control" value="<?php echo $row['EMAIL']; ?>"name="email1" placeholder="<?php echo $row['EMAIL']; ?>" >
+                                                <input type="text" class="form-control" value="<?php echo htmlspecialchars($row['EMAIL'], ENT_QUOTES, 'UTF-8'); ?>" name="email1" >
                                                 
                                             </div>
                                             
@@ -296,28 +303,36 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <?php
                                 } else {
                                     ?>
-                                    <form role="form" action="" method="post">
+                                    <form role="form" action="" method="post" autocomplete="off">
                                         <div class="box-body">
 
-                                            
-                                            
+
+                                            <?php if ($erro !== null) { ?>
+                                            <div class="alert alert-danger" role="alert">
+                                                <?php echo htmlspecialchars($erro, ENT_QUOTES, 'UTF-8'); ?>
+                                            </div>
+                                            <?php } ?>
+
+
                                             <div class="form-group">
                                                 <label for="nome">Nome:</label>
-                                                <input type="text" class="form-control" name="nome" >
-                                               
+                                                <input type="text" class="form-control" name="nome" required >
+                                                
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="utilizador">Utilizador:</label>
-                                                <input type="text" class="form-control" name="utilizador" >
-                                               
+                                                <input type="text" class="form-control" name="utilizador" maxlength="25" required >
+                                                
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="password">Password:</label>
-                                                <input type="text" class="form-control" name="password" >
+                                                <input type="password" class="form-control" name="password" minlength="8" required autocomplete="new-password" >
+                                                <p class="help-block">Minimo <?php echo AUTH_PASSWORD_MIN; ?> caracteres.</p>
                                                 
                                             </div>
+
                                             
                                             <div class="form-group">
                                                 <label for="email">Email:</label>

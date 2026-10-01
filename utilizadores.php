@@ -202,7 +202,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       </div>
                       <div class="box-body">
                           <?php
-                          $sql = 'SELECT tipo.NOME tipo , utilizadores.ID_UTILIZADORES, utilizadores.NOME, utilizadores.USERNAME, utilizadores.PASSWORD, utilizadores.EMAIL
+                          $sql = 'SELECT tipo.NOME tipo , utilizadores.ID_UTILIZADORES, utilizadores.NOME, utilizadores.USERNAME, utilizadores.EMAIL
                                   FROM utilizadores INNER JOIN tipo ON (utilizadores.TIPO = tipo.ID_TIPO)';
                           $rows = get_dados($sql);
                           ?>
@@ -222,12 +222,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                   <?php foreach ($rows as $value) {
                                       ?>
                                       <tr>
-                                          <td><?php echo $value['ID_UTILIZADORES']; ?></td>
-                                          <td><?php echo $value['NOME']; ?></td>
-                                          <td><?php echo $value['USERNAME']; ?></td>
-                                          <td><?php echo $value['EMAIL']; ?></td>
-                                          <td><?php echo $value['tipo']; ?></td>
-                                          <td><a href="utilizadores_1.php?id=<?php echo $value['ID_UTILIZADORES']; ?>"><span class="glyphicon glyphicon-refresh text-yellow"></span></a>&nbsp
+                                      <td><?php echo (int) $value['ID_UTILIZADORES']; ?></td>
+                                      <td><?php echo htmlspecialchars($value['NOME'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                      <td><?php echo htmlspecialchars($value['USERNAME'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                      <td><?php echo htmlspecialchars($value['EMAIL'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                      <td><?php echo htmlspecialchars($value['tipo'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                      <td><a href="utilizadores_1.php?id=<?php echo (int) $value['ID_UTILIZADORES']; ?>"><span class="glyphicon glyphicon-refresh text-yellow"></span></a>&nbsp
+
                                               <a href="?utilizadores=<?php echo $value['ID_UTILIZADORES']; ?>"><span class="glyphicon glyphicon-trash text-red"></span></a></span></td>
                                       </tr>
                                   <?php } ?>
