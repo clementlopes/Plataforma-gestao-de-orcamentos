@@ -139,9 +139,28 @@ php -S localhost:8000
 |---|---|---|
 | `admin` | `admin2026` | Administrador |
 | `user` | `user2026` | Utilizador |
+| `rui` | `rui2026` | Utilizador |
+| `marta` | `marta2026` | Utilizador |
+| `tiago` | `tiago2026` | Utilizador |
 
 > Troque estas palavras-passe antes de colocar o site online. Como hacerlo
 > está descrito na secção seguinte.
+
+### Dados de demonstração
+
+O ficheiro `Base dados/gestao.sql` traz dados de exemplo pensados para uma
+demonstração: 12 clientes, 16 artigos, 9 serviços, 29 orçamentos em todos os
+estados possíveis (pedido, aceite, rejeitado e realizado) e 9 cheques.
+
+As datas são **fixas em 2026**, e não calculadas a partir de `CURDATE()`. O
+dashboard filtra por data corrente, por isso os widgets só ficam preenchidos
+enquanto o relógio estiver dentro de 2026 — em Janeiro de 2027 os valores
+mensais e o gráfico ficam vazios. Para uma demonstração ao longo do tempo,
+ajuste as datas em `Base dados/gestao.sql` (ou consulte a nota em
+"Notas e limitações").
+
+A empresa incluída é fictícia (`TechStore Informática, Lda`), com NIF e IBAN de
+formato português válido para demonstração.
 
 ---
 
