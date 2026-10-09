@@ -213,7 +213,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       </div>
                       <div class="box-body">
                           <?php
-                          $sql = 'SELECT artigos.ID_ARTIGOS, artigos.NOME, artigos.DESCRICAO, artigos.PRECOUNITARIO, artigos.QUANTIDADE, categoria.NOME CATEGORIA, iva.IVA IVA FROM artigos INNER JOIN categoria ON (artigos.ID_ART_CATEGORIA = categoria.ID_CATEGORIA) INNER JOIN iva ON (artigos.ID_ART_IVA = iva.ID_IVA)';
+                          $sql = 'SELECT artigos.ID_ARTIGOS, artigos.NOME, artigos.DESCRICAO, artigos.PRECOUNITARIO, artigos.QUANTIDADE, categoria.NOME CATEGORIA, iva.IVA IVA FROM artigos INNER JOIN categoria ON (artigos.ID_ART_CATEGORIA = categoria.ID_CATEGORIA) INNER JOIN iva ON (artigos.ID_ART_IVA = iva.ID_IVA) ORDER BY artigos.ID_ARTIGOS DESC';
                           $rows = get_dados($sql);
                           ?>
 
@@ -306,7 +306,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- page script -->
 <script>
  $(function () {
-    $("#example1").DataTable();
+    $("#example1").DataTable({ order: [[0, "desc"]] });
   });
 
 

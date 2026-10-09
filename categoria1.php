@@ -212,7 +212,7 @@ if (!empty($_GET['categoria'])) {
                             </div>
 
                             <?php
-                            $sql = 'SELECT * FROM categoria';
+                            $sql = 'SELECT * FROM categoria ORDER BY ID_CATEGORIA DESC';
                             $rows = get_dados($sql);
                             ?>
 
@@ -284,7 +284,7 @@ if (!empty($_GET['categoria'])) {
 
     <script>
         $(function () {
-            $("#example1").DataTable();
+            $("#example1").DataTable({ order: [[0, "desc"]] });
 
         });
 

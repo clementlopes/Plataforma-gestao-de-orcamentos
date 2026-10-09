@@ -202,7 +202,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                               <a href="servicos1.php"> <button type="submit" class="btn btn-primary col-md-6"><i class="fa fa-plus"></i> Adicionar Novo</button></a><br><br>
                           </div>
                           <?php
-                          $sql = 'SELECT servicos.ID_SERVICOS, servicos.NOME, servicos.DESCRICAO, servicos.PRECOUNITARIO, servicos.QUANTIDADE, categorias.NOME CATEGORIAS, iva.IVA IVA FROM servicos INNER JOIN categorias on (servicos.ID_SER_CATEGORIA=categorias.ID_CATEGORIAS) INNER JOIN iva on (servicos.ID_SER_IVA=iva.ID_IVA)';
+                          $sql = 'SELECT servicos.ID_SERVICOS, servicos.NOME, servicos.DESCRICAO, servicos.PRECOUNITARIO, servicos.QUANTIDADE, categorias.NOME CATEGORIAS, iva.IVA IVA FROM servicos INNER JOIN categorias on (servicos.ID_SER_CATEGORIA=categorias.ID_CATEGORIAS) INNER JOIN iva on (servicos.ID_SER_IVA=iva.ID_IVA) ORDER BY servicos.ID_SERVICOS DESC';
                           $rows = get_dados($sql);
                           ?>
 
@@ -289,7 +289,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- page script -->
 <script>
   $(function () {
-    $("#example1").DataTable();
+    $("#example1").DataTable({ order: [[0, "desc"]] });
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,

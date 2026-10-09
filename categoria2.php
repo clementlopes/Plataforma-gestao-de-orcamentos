@@ -214,7 +214,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </div>
 
                                 <?php
-                                $sql = 'SELECT * FROM categorias';
+                                $sql = 'SELECT * FROM categorias ORDER BY ID_CATEGORIAS DESC';
                                 $rows = get_dados($sql);
                                 ?>
                                 <!-- /.box-header -->
@@ -281,7 +281,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <script>
  $(function () {
-    $("#example1").DataTable();
+    $("#example1").DataTable({ order: [[0, "desc"]] });
    
   });
 

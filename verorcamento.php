@@ -226,7 +226,8 @@ desired effect
                           $sql = 'SELECT orcamento.ID_ORCAMENTO, clientes.NOME CLIENTE, orcamento.DATA, utilizadores.NOME UTILIZADOR, tipo_orc.NOME TIPO
                                         FROM orcamento INNER JOIN clientes ON (orcamento.ID_ORC_CLIENTES = clientes.ID_CLIENTES)
                                         INNER JOIN utilizadores ON (orcamento.ID_ORC_UTILIZADORES = utilizadores.ID_UTILIZADORES)
-                                        INNER JOIN tipo_orc ON (orcamento.TIPO = tipo_orc.ID_TIPO_ORC)';
+                                        INNER JOIN tipo_orc ON (orcamento.TIPO = tipo_orc.ID_TIPO_ORC)
+                                        ORDER BY orcamento.ID_ORCAMENTO DESC';
                           $rows = get_dados($sql);
                           ?>
 
@@ -313,7 +314,7 @@ desired effect
 <!-- page script -->
 <script>
   $(function () {
-    $("#example1").DataTable();
+    $("#example1").DataTable({ order: [[0, "desc"]] });
   });
 </script>
 </body>

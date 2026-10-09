@@ -201,7 +201,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       </div>
                       <div class="box-body">
                           <?php
-                          $sql = 'SELECT * FROM clientes';
+                          $sql = 'SELECT * FROM clientes ORDER BY ID_CLIENTES DESC';
                           $rows = get_dados($sql);
                           ?>
 
@@ -290,7 +290,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- page script -->
 <script>
   $(function () {
-    $("#example1").DataTable();
+    $("#example1").DataTable({ order: [[0, "desc"]] });
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,

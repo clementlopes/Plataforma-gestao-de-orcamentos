@@ -203,7 +203,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       <div class="box-body">
                           <?php
                           $sql = 'SELECT tipo.NOME tipo , utilizadores.ID_UTILIZADORES, utilizadores.NOME, utilizadores.USERNAME, utilizadores.EMAIL
-                                  FROM utilizadores INNER JOIN tipo ON (utilizadores.TIPO = tipo.ID_TIPO)';
+                                  FROM utilizadores INNER JOIN tipo ON (utilizadores.TIPO = tipo.ID_TIPO)
+                                  ORDER BY utilizadores.ID_UTILIZADORES DESC';
                           $rows = get_dados($sql);
                           ?>
 
@@ -286,7 +287,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- page script -->
 <script>
   $(function () {
-    $("#example1").DataTable();
+    $("#example1").DataTable({ order: [[0, "desc"]] });
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
