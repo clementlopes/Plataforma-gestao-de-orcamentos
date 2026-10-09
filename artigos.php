@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html>
     
      <?php
-    include_once('session.php');
+    include_once __DIR__ . '/includes/session.php';
     
     if (!empty($_GET['artigos'])) {
     $sql="DELETE FROM artigos WHERE ID_ARTIGOS=".$_GET['artigos'].';';
@@ -277,7 +277,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 $versao= get_dados_one($footerq);
                 ?>
                 <center>
-                  <img  src="img/icon Pgo.png"  >&nbsp  Plataforma<strong>&nbspGO</strong> - Versão <?PHP echo $versao['VERSAO']; ?>  Desenvolvido por Clément Lopes
+                  <img  src="img/icon pgo.png"  >&nbsp  Plataforma<strong>&nbspGO</strong> - Versão <?PHP echo $versao['VERSAO']; ?>  Desenvolvido por Clément Lopes
                 <br><strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved. <b>Version</b> 2.3.7
                 </center>
             </footer>

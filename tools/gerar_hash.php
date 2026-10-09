@@ -20,7 +20,7 @@ if (PHP_SAPI !== 'cli') {
     exit("Este script so corre na linha de comandos.\n");
 }
 
-require __DIR__ . '/../auth.php';
+require __DIR__ . '/../includes/auth.php';
 
 $senha = isset($argv[1]) ? $argv[1] : '';
 

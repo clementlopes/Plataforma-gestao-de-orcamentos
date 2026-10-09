@@ -3,7 +3,7 @@
  * index.php — Pagina de entrada (login).
  */
 
-include_once __DIR__ . '/login_check.php';
+include_once __DIR__ . '/includes/login_check.php';
 
 $erro = null;
 $utilizador_preenchido = auth_lembrado();

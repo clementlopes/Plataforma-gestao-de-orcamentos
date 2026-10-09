@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html>
 
     <?php
-    include_once 'session.php';
+    include_once __DIR__ . '/includes/session.php';
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['nome'])) {

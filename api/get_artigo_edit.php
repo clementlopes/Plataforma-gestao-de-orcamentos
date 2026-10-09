@@ -32,7 +32,7 @@
  <?php  
  
  
- include_once'session.php';
+ include_once __DIR__ . '/../includes/session.php';
     
 header('Content-Type: application/json');
 

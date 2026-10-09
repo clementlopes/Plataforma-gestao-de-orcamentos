@@ -6,7 +6,7 @@
  * sessao continuaria no navegador e o ficheiro de sessao no servidor.
  */
 
-include_once __DIR__ . '/auth.php';
+include_once __DIR__ . '/includes/auth.php';
 
 auth_iniciar_sessao();
 

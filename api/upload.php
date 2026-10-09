@@ -1,11 +1,12 @@
 
 
 <?php
-include_once ('session.php');
+include_once __DIR__ . '/../includes/session.php';
 
 $id = $_POST['idempresa'];
 $target_dir = "img/";
-$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+$target_dir_fs = __DIR__ . '/../img/';
+$target_file = $target_dir_fs . basename($_FILES["fileToUpload"]["name"]);
 
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -46,7 +47,7 @@ if ($uploadOk == 0) {
         $rename= 'logo';
         $newname= $rename.".".$extension;
         $filesname= $_FILES["fileToUpload"]["tmp_name"];
-        if (move_uploaded_file( $filesname, "img/". $newname)) {
+        if (move_uploaded_file( $filesname, $target_dir_fs . $newname)) {
 //    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
         echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
     } else {
@@ -62,6 +63,6 @@ if ($uploadOk == 0) {
         return 1; 
     }
 
-header("location: empresa.php");
+header("location: ../empresa.php");
 
 ?>

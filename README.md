@@ -5,8 +5,7 @@ AdminLTE. Foi criado como trabalho escolar e depois modernizado para estar
 publicado e demonstrável: o login foi reescrito e a forma de guardar as
 palavras-passe deixou de ser `md5()`.
 
-> **Demonstração:** <!-- Troque pelo seu URL do Virtualmin -->
-> <!-- https://exemplo.seudominio.pt -->
+> **Demonstração:** https://pgo.clementlopes.site
 
 ---
 
@@ -103,7 +102,7 @@ Crie uma base de dados e importe o ficheiro:
 
 ```bash
 mysql -u root -p -e "CREATE DATABASE gestao CHARACTER SET utf8;"
-mysql -u root -p gestao < "Base dados/gestao.sql"
+mysql -u root -p gestao < "database/gestao.sql"
 ```
 
 O ficheiro cria a estrutura e uns utilizadores de demonstração.
@@ -148,7 +147,7 @@ php -S localhost:8000
 
 ### Dados de demonstração
 
-O ficheiro `Base dados/gestao.sql` traz dados de exemplo pensados para uma
+O ficheiro `database/gestao.sql` traz dados de exemplo pensados para uma
 demonstração: 12 clientes, 16 artigos, 9 serviços, 29 orçamentos em todos os
 estados possíveis (pedido, aceite, rejeitado e realizado) e 9 cheques.
 
@@ -156,7 +155,7 @@ As datas são **fixas em 2026**, e não calculadas a partir de `CURDATE()`. O
 dashboard filtra por data corrente, por isso os widgets só ficam preenchidos
 enquanto o relógio estiver dentro de 2026 — em Janeiro de 2027 os valores
 mensais e o gráfico ficam vazios. Para uma demonstração ao longo do tempo,
-ajuste as datas em `Base dados/gestao.sql` (ou consulte a nota em
+ajuste as datas em `database/gestao.sql` (ou consulte a nota em
 "Notas e limitações").
 
 A empresa incluída é fictícia (`TechStore Informática, Lda`), com NIF e IBAN de
@@ -164,16 +163,42 @@ formato português válido para demonstração.
 
 ---
 
-## Publicação no Virtualmin
+## Publicação (home lab com Virtualmin, NPM e Cloudflare Tunnel)
+
+O site corre num servidor caseiro com **Virtualmin** — o mesmo servidor
+que aloja outras aplicações web (o painel **Virtualmin**, o
+**phpMyAdmin**, o **Nginx Proxy Manager** e o túnel da **Cloudflare**).
+O pedido público faz este caminho:
+
+```text
+Navegador
+    │  HTTPS (certificado gerido pela Cloudflare)
+    ▼
+Cloudflare ──(Cloudflare Tunnel / cloudflared)──► Nginx Proxy Manager
+                                                       │  reverse proxy
+                                                       ▼
+                                                  Apache / Virtualmin
+                                                  (pgo.clementlopes.site)
+```
+
+- **Cloudflare Tunnel (`cloudflared`)** expõe o servidor sem abrir portas
+  na router; o certificado público é gerido pela Cloudflare.
+- **Nginx Proxy Manager (NPM)** recebe o tráfego do túnel e encaminha-o
+  para o Apache do Virtualmin, onde está o `public_html` do domínio.
+- **Virtualmin / Apache** serve o PHP e a base de dados MariaDB.
+
+Como o servidor aloja várias aplicações, cada uma fica no seu domínio ou
+subdomínio do Virtualmin, e o NPM trata do encaminhamento para a porta
+certa.
 
 ### 1. Ficheiros
 
 Carregue o conteúdo do repositório para a pasta pública do domínio
-(normalmente `~/domains/seudominio.pt/public_html`), pelo **File Manager**,
-**FTP** ou `rsync`:
+(normalmente `~/domains/pgo.clementlopes.site/public_html`), pelo
+**File Manager**, **FTP** ou `rsync`:
 
 ```bash
-rsync -av --exclude='.git' --exclude='.env' ./ user@seudominio.pt:~/domains/seudominio.pt/public_html/
+rsync -av --exclude='.git' --exclude='.env' ./ user@servidor:~/domains/pgo.clementlopes.site/public_html/
 ```
 
 O `.env` fica de fora de propósito — copie-o à mão no servidor.
@@ -188,7 +213,7 @@ utilizador. Anote o nome da base e a password gerada.
 Em **Webmin → Servers → MySQL**, ou por linha de comandos:
 
 ```bash
-mysql -u NOMEUTILIZADOR -p NOMEBASEDADOS < gestao.sql
+mysql -u NOMEUTILIZADOR -p NOMEBASEDADOS < database/gestao.sql
 ```
 
 ### 4. Configurar o `.env`
@@ -212,15 +237,25 @@ chmod 640 .env
 O `.env` só deve ser legível pelo PHP, por isso convém que não fique
 legível por outros utilizadores do servidor.
 
-### 6. Ligar o domínio e ativar HTTPS
+### 6. Domínio, proxy e HTTPS
 
-Em **Virtualmin → Edit Server**, confirme o nome do domínio e ative
-**SSL** com Let's Encrypt. Com HTTPS activo, os cookies de sessão passam a
-ser marcados como `Secure` automaticamente.
+- Em **Virtualmin → Edit Server**, confirme o domínio
+  (`pgo.clementlopes.site`) e que o Apache está a servir a pasta do
+  projecto.
+- No **Nginx Proxy Manager**, crie um *Proxy Host* para
+  `pgo.clementlopes.site` a apontar para o Apache do Virtualmin
+  (`http://127.0.0.1:80`, ou o IP/porta do host), com **Websockets
+  Support** ligado.
+- Encaminhe esse *proxy host* pelo **Cloudflare Tunnel** (o `cloudflared`
+  aponta o hostname para o NPM).
+- **Importante:** o NPM / `cloudflared` deve enviar o cabeçalho
+  `X-Forwarded-Proto: https`. A aplicação lê-o em `includes/auth.php` para
+  marcar os cookies de sessão como `Secure`; sem ele, o Apache — que vê o
+  pedido como HTTP, vindo do proxy — não marca os cookies como seguros.
 
 ### 7. Confirmar que está tudo certo
 
-Abra `https://seudominio.pt/` e entre com `admin` / `admin2026`.
+Abra `https://pgo.clementlopes.site/` e entre com `admin` / `admin2026`.
 
 ---
 
@@ -251,27 +286,44 @@ Ou, mais simples, entre na aplicação como administrador e use
 ```
 .
 ├── index.php              Página de login
-├── login_check.php        Autenticação (prepared statements, hash_equals)
-├── auth.php               Hashing de senhas, CSRF, limitação de tentativas
-├── env.php                Leitura do ficheiro .env
-├── config.php            Ligação à base de dados
-├── session.php            Sessão e funções de acesso a dados
-├── logout.php             Terminar sessão
 ├── home.php               Painel principal
-├── utilizadores.php      Lista de utilizadores
-├── utilizadores_1.php     Criar / editar utilizadores
-├── clientes.php           Lista de clientes
+├── logout.php             Terminar sessão
+├── empresa.php            Dados da empresa
 ├── artigos.php            Lista de artigos
+├── artigos1.php           Criar / editar artigos
 ├── servicos.php           Lista de serviços
+├── servicos1.php          Criar / editar serviços
+├── categoria1.php         Lista de categorias de artigos
+├── categoria1_1.php       Criar / editar categorias de artigos
+├── categoria2.php         Lista de categorias de serviços
+├── categoria2_2.php       Criar / editar categorias de serviços
+├── clientes.php           Lista de clientes
+├── clientes_1.php         Criar / editar clientes
+├── utilizadores.php       Lista de utilizadores
+├── utilizadores_1.php     Criar / editar utilizadores
 ├── verorcamento.php       Lista de orçamentos
+├── verorcamento_1.php     Criar orçamento
+├── verorcamento_1editar.php  Editar orçamento
 ├── orcamentopdf.php       Exportação para PDF
-├── dbcontroller.php       Helpers de base de dados
+├── includes/
+│   ├── auth.php           Hashing de senhas, CSRF, limitação de tentativas
+│   ├── config.php         Ligação à base de dados
+│   ├── env.php            Leitura do ficheiro .env
+│   ├── login_check.php    Autenticação (prepared statements, hash_equals)
+│   └── session.php        Sessão e funções de acesso a dados
+├── api/
+│   ├── get_cliente.php    Pesquisa de clientes (AJAX)
+│   ├── get_cliente_1.php  Detalhe de cliente (AJAX)
+│   ├── get_artigo_edit.php  Detalhe de linha de orçamento (AJAX)
+│   ├── ins_linha.php      Inserir / editar linhas de orçamento
+│   └── upload.php         Upload do logotipo da empresa
 ├── tools/
 │   └── gerar_hash.php     Gera hashes de senha pela linha de comandos
 ├── tests/
 │   └── testes_auth.php    Testes da autenticação
-├── Base dados/
+├── database/
 │   └── gestao.sql         Estrutura e dados de demonstração
+├── legacy/                Código antigo / não usado (arquivado)
 ├── bootstrap/  dist/  plugins/  js/  img/   Front-end (AdminLTE)
 └── .env.example           Exemplo de configuração
 ```
@@ -299,7 +351,7 @@ Para correr:
 
 ```bash
 mysql -u root -e "CREATE DATABASE gestao_teste CHARACTER SET utf8;"
-mysql -u root gestao_teste < "Base dados/gestao.sql"
+mysql -u root gestao_teste < "database/gestao.sql"
 php tests/testes_auth.php
 ```
 

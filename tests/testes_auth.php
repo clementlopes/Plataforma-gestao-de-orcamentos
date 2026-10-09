@@ -6,7 +6,7 @@
  * com o nome da base de dados de testes (tem de existir e estar vazia).
  *
  *   mysql -u root -e "CREATE DATABASE gestao_teste CHARACTER SET utf8;"
- *   mysql -u root gestao_teste < "Base dados/gestao.sql"
+ *   mysql -u root gestao_teste < "database/gestao.sql"
  *   $env:PGO_TEST_DB="gestao_teste"; php tests/testes_auth.php
  */
 
@@ -68,9 +68,9 @@ function sessao_limpa() {
 // ----------------------------------------------------------------------
 
 $_SERVER['HTTPS'] = 'off';
-require $raiz . '/auth.php';
+require $raiz . '/includes/auth.php';
 auth_iniciar_sessao();
-require $raiz . '/login_check.php';
+require $raiz . '/includes/login_check.php';
 
 // ======================================================================
 secao('Sessao');
@@ -221,7 +221,7 @@ secao('Criar e actualizar utilizadores');
 $_SESSION['ID_UTILIZADORES'] = 5;
 $_SESSION['TIPO'] = 1;
 $_SERVER['REQUEST_METHOD'] = 'GET';
-require $raiz . '/session.php';
+require $raiz . '/includes/session.php';
 
 $db->query('DELETE FROM utilizadores WHERE USERNAME LIKE "teste%"');
 

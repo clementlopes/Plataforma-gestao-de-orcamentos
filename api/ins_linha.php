@@ -3,7 +3,7 @@
 
        
  <?php
-    include_once'session.php';
+    include_once __DIR__ . '/../includes/session.php';
              session_start();
 
              
@@ -108,7 +108,7 @@
                     }
             } 
         
-        header("location: verorcamento.php");
+        header("location: ../verorcamento.php");
     }
     
     
@@ -174,7 +174,7 @@
            }
                     
             }
-        header("location: verorcamento_1editar.php?id=$id");
+        header("location: ../verorcamento_1editar.php?id=$id");
        
     }
     

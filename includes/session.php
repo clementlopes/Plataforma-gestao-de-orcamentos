@@ -1,7 +1,7 @@
 <?php
 
-include_once ('config.php');
-include_once ('auth.php');
+include_once __DIR__ . '/config.php';
+include_once __DIR__ . '/auth.php';
 
 /**
  * Erros de PHP so sao mostrados no browser em modo de desenvolvimento.
@@ -17,7 +17,7 @@ auth_iniciar_sessao();
   {
     // nÃ£o existe sessÃ£o iniciada
     // o utilizador  Ã© expulso da pÃ¡gina actuaÃ§
-    header('Location: index.php');
+    header('Location: ../index.php');
     exit();
   }
 

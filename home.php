@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html>
 
 <?php
-include_once 'session.php';
+include_once __DIR__ . '/includes/session.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['fornecedor'], $_POST['dataEmissao'], $_POST['dataPagamento'], $_POST['valor'], $_POST['dias'])) {
@@ -985,7 +985,7 @@ desired effect
     $versao = get_dados_one($footerq);
     ?>
     <center><p style="font-size: 10px;">
-            <img src="img/icon Pgo.png">&nbsp Plataforma<strong>&nbspGO</strong> -
+            <img src="img/icon pgo.png">&nbsp Plataforma<strong>&nbspGO</strong> -
             Versão <?PHP echo $versao['VERSAO']; ?>
             <br><strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All
             rights reserved. <b>Version</b> 2.3.7
@@ -1025,7 +1025,7 @@ desired effect
         ];
 
         $.ajax({
-            url: 'session.php?chartData=true',
+            url: 'includes/session.php?chartData=true',
             type: 'GET',
             dataType: 'json',
             success: function (data) {
@@ -1211,7 +1211,7 @@ desired effect
 
             // Faça uma solicitação AJAX para obter os detalhes do cheque
             $.ajax({
-                url: 'session.php',
+                url: 'includes/session.php',
                 method: 'POST',
                 data: {idCheque: idCheque},
                 dataType: 'json',

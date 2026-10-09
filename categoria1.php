@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html>
 
 <?php
-include_once('session.php');
+include_once __DIR__ . '/includes/session.php';
 
 if (!empty($_GET['categoria'])) {
     $sql = "DELETE FROM categoria WHERE ID_CATEGORIA=" . $_GET['categoria'] . ';';
@@ -257,7 +257,7 @@ if (!empty($_GET['categoria'])) {
         $versao = get_dados_one($footerq);
         ?>
         <center><p style="font-size: 10px;">
-                <img src="img/icon Pgo.png">&nbsp Plataforma<strong>&nbspGO</strong> -
+                <img src="img/icon pgo.png">&nbsp Plataforma<strong>&nbspGO</strong> -
                 Versão <?PHP echo $versao['VERSAO']; ?>
                 <br><strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong>
                 All rights reserved. <b>Version</b> 2.3.7

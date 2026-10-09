@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html>
 
     <?php
-    include_once'session.php';
+    include_once __DIR__ . '/includes/session.php';
     $total= '0';
     
    
@@ -1139,7 +1139,7 @@ for (var j = 1; j < pages + 1 ; j++) {
                                                     
                                                     <div class="modal-body">
                                                     
-                                                       <form id="inslinha" action="ins_linha.php" method="POST">  
+                                                       <form id="inslinha" action="api/ins_linha.php" method="POST">  
 
                                                            <input type="hidden" id="IDORC" name="id" class="form-control" >
 
@@ -1323,7 +1323,7 @@ for (var j = 1; j < pages + 1 ; j++) {
                 $versao= get_dados_one($footerq);
                 ?>
                 <center><p style="font-size: 10px;">
-                    <img  src="img/icon Pgo.png"  >&nbsp  Plataforma<strong>&nbspGO</strong> - Versão <?PHP echo $versao['VERSAO']; ?>
+                    <img  src="img/icon pgo.png"  >&nbsp  Plataforma<strong>&nbspGO</strong> - Versão <?PHP echo $versao['VERSAO']; ?>
                 <br><strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved. <b>Version</b> 2.3.7
                     </p></center>
             </footer>
@@ -1554,7 +1554,7 @@ window.onload = function(){
            if(query != '')  
            {  
                 $.ajax({  
-                     url:"get_cliente.php",  
+                     url:"api/get_cliente.php",  
                      method:"POST",  
                      data:{query:query},  
                      success:function(dados)  
@@ -1572,7 +1572,7 @@ window.onload = function(){
            $('#countryList').fadeOut();  
            
              $.ajax({
-               url:"get_cliente_1.php",
+               url:"api/get_cliente_1.php",
                method:"POST",
                dataType:"json",
                data:{cliente:cliente},  
@@ -1700,7 +1700,7 @@ window.onload = function(){
     var idlinha = $(this).data('id');
      $(".modal-content #IDLINHA").val( idlinha );
       $.ajax({
-               url:"get_artigo_edit.php",
+               url:"api/get_artigo_edit.php",
                method:"POST",
                dataType:"json",
                data:{idlinha:idlinha}, //CORREGIR 
